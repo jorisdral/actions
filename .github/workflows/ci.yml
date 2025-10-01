@@ -1,0 +1,131 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - "main"
+  pull_request:
+  merge_group:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+# Set the default shell on all platforms.
+defaults:
+  run:
+    shell: sh
+
+jobs:
+  ################################################################################
+  # Test the setup-actionlint action
+  ################################################################################
+  setup-actionlint:
+    name: Test the setup-actionlint action
+    runs-on: ubuntu-latest
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v5
+
+    - name: 🛠️ Setup actionlint
+      uses: ./setup-actionlint
+      with:
+        actionlint-version: "1.7.7"
+
+    - name: 🧪 Check actionlint
+      run: |
+        which actionlint
+        actionlint --version
+
+  ################################################################################
+  # Test the setup-cabal-docspec action
+  ################################################################################
+  setup-cabal-docspec:
+    name: Test the setup-cabal-docspec action
+    runs-on: ubuntu-latest
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v5
+
+    - name: 🛠️ Setup actionlint
+      uses: ./setup-cabal-docspec
+
+    - name: 🧪 Check cabal-docspec
+      run: |
+        which cabal-docspec
+        cabal-docspec --version
+
+  ################################################################################
+  # Test the setup-cabal-fmt action
+  ################################################################################
+  setup-cabal-fmt:
+    name: Test the setup-cabal-fmt action
+    runs-on: ubuntu-latest
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v5
+
+    - name: 🛠️ Setup cabal-fmt
+      uses: ./setup-cabal-fmt
+      with:
+        cabal-fmt-version: "0.1.12"
+        ghc-version: "9.6"
+        cabal-version: "3.12"
+        # The index-state is fixed to enable caching and ensure that the version
+        # regardless of the current state of Hackage head.
+        # If you want a newer version of cabal-fmt, use a more recent time.
+        hackage-index-state: "2025-09-30T00:00:00Z"
+
+    - name: 🧪 Check cabal-fmt
+      run: |
+        which cabal-fmt
+        cabal-fmt --version
+
+  ################################################################################
+  # Test the setup-shellcheck action
+  ################################################################################
+  setup-shellcheck:
+    name: Test the setup-shellcheck action
+    runs-on: ubuntu-latest
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v5
+
+    - name: 🛠️ Setup stylish-haskell
+      uses: ./setup-shellcheck
+      with:
+          shellcheck-version: "0.10.0"
+
+    - name: 🧪 Check shellcheck
+      run: |
+        which shellcheck
+        shellcheck --version
+
+  ################################################################################
+  # Test the setup-stylish-haskell action
+  ################################################################################
+  setup-stylish-haskell:
+    name: Test the setup-stylish-haskell action
+    runs-on: ubuntu-latest
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v5
+
+    - name: 🛠️ Setup stylish-haskell
+      uses: ./setup-stylish-haskell
+      with:
+        stylish-haskell-version: "0.15.1.0"
+        ghc-version: "9.10"
+        cabal-version: "3.12"
+        # The index-state is fixed to enable caching and ensure that the version
+        # regardless of the current state of Hackage head.
+        # If you want a newer version of stylish-haskell, use a more recent time.
+        hackage-index-state: "2025-09-30T00:00:00Z"
+
+    - name: 🧪 Check stylish-haskell
+      run: |
+        which stylish-haskell
+        stylish-haskell --version
