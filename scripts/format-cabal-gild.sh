@@ -23,7 +23,7 @@ fi
 # Format Cabal files with cabal-gild
 echo "Formatting Cabal source files with cabal-gild version ${cabal_gild_actual_version}"
 # shellcheck disable=SC2016
-if ! git ls-files --exclude-standard --no-deleted --deduplicate '*.cabal' | xargs -L 1 sh -c 'echo "$0" && cabal-gild -c "$0" 2>/dev/null || (cabal-gild -i "$0" -o "$0" && exit 1)'; then
+if ! git ls-files --exclude-standard --no-deleted --deduplicate '*.cabal' | xargs -L 1 sh -c 'echo "$0" && cabal-gild -mcheck -i "$0" 2>/dev/null || (cabal-gild -i "$0" -o "$0" && exit 1)'; then
     exit 1
 fi
 
